@@ -179,6 +179,7 @@ public class BinaryTree<AnyType> {
                     break;
                 }
             }
+            tmp = num_tmp;
         }
 
     }
