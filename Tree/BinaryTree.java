@@ -89,6 +89,20 @@ public class BinaryTree<AnyType> {
         }
 
     }
+    
+    void insertIterative(int data, TreeNode node){
+        if(Integer.parseInt(node.data.toString())<= data && node.right == null){
+            node.right = new TreeNode(data);
+        }else if(Integer.parseInt(node.data.toString())>data&&node.left == null){
+            node.left = new TreeNode(data);
+        }else if(node.left != null && node.right != null){
+            if(Integer.parseInt(node.data.toString())<=data){
+                this.insertIterative(data, node.right);
+            }else{
+                this.insertIterative(data, node.left);
+            }
+        }
+    }
 
     TreeNode<AnyType> iterativeMinSearch() {
         this.treversal = this.root;
