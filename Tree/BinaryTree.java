@@ -89,20 +89,6 @@ public class BinaryTree<AnyType> {
         }
 
     }
-    
-    void insertIterative(int data, TreeNode node){
-        if(Integer.parseInt(node.data.toString())<= data && node.right == null){
-            node.right = new TreeNode(data);
-        }else if(Integer.parseInt(node.data.toString())>data&&node.left == null){
-            node.left = new TreeNode(data);
-        }else if(node.left != null && node.right != null){
-            if(Integer.parseInt(node.data.toString())<=data){
-                this.insertIterative(data, node.right);
-            }else{
-                this.insertIterative(data, node.left);
-            }
-        }
-    }
 
     TreeNode<AnyType> iterativeMinSearch() {
         this.treversal = this.root;
@@ -150,8 +136,8 @@ public class BinaryTree<AnyType> {
         this.treversalHelper();
     }
 
-    private void deletePriv(int value) {
-        TreeNode num_tmp = null, prev_tmp = null, tmp = this.root;
+    TreeNode deleteFinder(int value, TreeNode node) {
+        TreeNode tmp = node, prev = null;
         while (Integer.parseInt(tmp.data.toString()) != value) {
             if (Integer.parseInt(tmp.data.toString()) > value) {
                 this.treversal = tmp;
@@ -161,41 +147,83 @@ public class BinaryTree<AnyType> {
                 tmp = tmp.right;
             }
         }
-        int del_num = Integer.parseInt(tmp.data.toString());
-        while (true) {
-            if (tmp.left != null) {
-                prev_tmp = tmp.left;
-                num_tmp = tmp.left.iterativeMaxSarch();
-            }
-            if (num_tmp == null && tmp.right != null) {
-                prev_tmp = tmp.right;
-                num_tmp = tmp.right.iterativeMinSearch();
-            }
-            if (num_tmp != null) {
-                tmp.data = num_tmp.data;
-            }
-            if (prev_tmp == num_tmp && prev_tmp != null) {
-                if (Integer.parseInt(prev_tmp.data.toString()) >= del_num) {
-                    tmp.right = null;
-                    break;
-                } else if (Integer.parseInt(prev_tmp.data.toString()) < del_num) {
-                    tmp.left = null;
-                    break;
-                }
+        return tmp;
+    }
 
+    TreeNode deletePrevFinder(int value, TreeNode node) {
+        TreeNode tmp = node, prev = null;
+        while (Integer.parseInt(tmp.data.toString()) != value) {
+            if (Integer.parseInt(tmp.data.toString()) > value) {
+                prev = tmp;
+                tmp = tmp.left;
+            } else {
+                prev = tmp;
+                tmp = tmp.right;
             }
-            if (prev_tmp == null && num_tmp == null) {
-                if (Integer.parseInt(this.treversal.data.toString()) > del_num) {
-                    this.treversal.left = null;
-                    break;
-                } else {
-                    this.treversal.right = null;
-                    break;
-                }
-            }
-            tmp = num_tmp;
         }
+        return prev;
+    }
 
+    private void deletePriv(int del_num) {
+        TreeNode tmp = this.root, prev_tmp = null;
+        while (Integer.parseInt(tmp.data.toString()) != del_num) {
+            if (Integer.parseInt(tmp.data.toString()) > del_num) {
+                prev_tmp = tmp;
+                tmp = tmp.left;
+            } else {
+                prev_tmp = tmp;
+                tmp = tmp.right;
+            }
+        }
+        TreeNode num_tmp = null, tmp_tmp;
+
+        if (tmp.left != null) {
+            tmp_tmp = tmp.left;
+            while (tmp_tmp.left != null) {
+                prev_tmp = tmp_tmp;
+                tmp_tmp = tmp_tmp.left;
+            }
+        }
+        if (num_tmp == null && tmp.right != null) {
+            tmp_tmp = tmp.right;
+            while (tmp_tmp.right != null) {
+                prev_tmp = tmp_tmp;
+                tmp_tmp = tmp_tmp.right;
+            }
+        }
+        if (num_tmp != null) {
+            tmp.data = num_tmp.data;
+        }
+        if (num_tmp == null) {
+            if (Integer.parseInt(tmp.data.toString()) > Integer.parseInt(prev_tmp.data.toString())) {
+                prev_tmp.left = null;
+                return;
+            } else {
+                prev_tmp.right = null;
+                return;
+            }
+        }
+        if (num_tmp.left != null) {
+            prev_tmp.right = num_tmp.left;
+            return;
+        } else if (num_tmp.right != null) {
+            prev_tmp.left = num_tmp.right;
+            return;
+        }
+    }
+
+    void insertIterative(int data, TreeNode node) {
+        if (Integer.parseInt(node.data.toString()) <= data && node.right == null) {
+            node.right = new TreeNode(data);
+        } else if (Integer.parseInt(node.data.toString()) > data && node.left == null) {
+            node.left = new TreeNode(data);
+        } else if (node.left != null && node.right != null) {
+            if (Integer.parseInt(node.data.toString()) <= data) {
+                this.insertIterative(data, node.right);
+            } else {
+                this.insertIterative(data, node.left);
+            }
+        }
     }
 
     void printTree() {
@@ -397,7 +425,8 @@ public class BinaryTree<AnyType> {
                     node.left = this.stabilizer(node.left);
                     node.right = this.stabilizer(node.right);
                 }
-            }return node;
+            }
+            return node;
         }
         return null;
 
