@@ -66,6 +66,30 @@ public class BinaryTree<AnyType> {
     void treversalHelper() {
         this.treversal = this.root;
     }
+    
+    TreeNode doubleLeft(TreeNode node){
+        TreeNode tmp = node.right.left;
+        TreeNode nodeRight = node.right;
+        TreeNode tmpRight = tmp.right;
+        TreeNode tmpLeft = tmp.left;
+        tmp.right = node.right;
+        nodeRight.left = tmpRight;
+        tmp.left = node;
+        node.right = tmpLeft;
+        return tmp;
+    }
+    
+    TreeNode doubleRight(TreeNode node){
+        TreeNode tmp = node.left.right;
+        TreeNode nodeLeft = node.left;
+        TreeNode tmpRight = tmp.right;
+        TreeNode tmpLeft = tmp.left;
+        tmp.left = nodeLeft;
+        nodeLeft.right = tmpRight;
+        tmp.right = node;
+        node.left = tmpLeft;
+        return tmp;
+    }
 
     void insert(int value) {
         TreeNode prev_tmp = null;
