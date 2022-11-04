@@ -183,6 +183,7 @@ public class BinaryTree<AnyType> {
                 prev_tmp = tmp_tmp;
                 tmp_tmp = tmp_tmp.left;
             }
+            num_tmp = tmp_tmp;
         }
         if (num_tmp == null && tmp.right != null) {
             tmp_tmp = tmp.right;
@@ -190,6 +191,7 @@ public class BinaryTree<AnyType> {
                 prev_tmp = tmp_tmp;
                 tmp_tmp = tmp_tmp.right;
             }
+            num_tmp = tmp_tmp;
         }
         if (num_tmp != null) {
             tmp.data = num_tmp.data;
@@ -287,6 +289,30 @@ public class BinaryTree<AnyType> {
             this.postorderPriv(node.right);
         }
         System.out.print(node.data.toString());
+    }
+
+    TreeNode doubleLeft(TreeNode node) {
+        TreeNode tmp = node.right.left;
+        TreeNode nodeRight = node.right;
+        TreeNode tmpRight = tmp.right;
+        TreeNode tmpLeft = tmp.left;
+        tmp.right = node.right;
+        nodeRight.left = tmpRight;
+        tmp.left = node;
+        node.right = tmpLeft;
+        return tmp;
+    }
+
+    TreeNode doubleRight(TreeNode node) {
+        TreeNode tmp = node.left.right;
+        TreeNode nodeLeft = node.left;
+        TreeNode tmpRight = tmp.right;
+        TreeNode tmpLeft = tmp.left;
+        tmp.left = nodeLeft;
+        nodeLeft.right = tmpRight;
+        tmp.right = node;
+        node.left = tmpLeft;
+        return tmp;
     }
 
     int nodeCountWithStack() {
@@ -400,29 +426,66 @@ public class BinaryTree<AnyType> {
             int leftHeight = this.heightPriv(node.left);
             int rightHeight = this.heightPriv(node.right);
             if (rightHeight != leftHeight) {
-                if (leftHeight < rightHeight) {
-                    while (leftHeight != rightHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
+                if (leftHeight < rightHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
+                    if (node.left.right == null) {
+                        while (leftHeight != rightHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
 
-                        if (node.right != null) {
-                            node = this.rotateRight(node);
+                            if (node.right != null) {
+                                node = this.rotateRight(node);
+                            } else {
+                                break;
+                            }
+                            leftHeight = this.heightPriv(node.left);
+                            rightHeight = this.heightPriv(node.right);
                         }
-                        leftHeight = this.heightPriv(node.left);
-                        rightHeight = this.heightPriv(node.right);
+                    } else {
+                        while (leftHeight != rightHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
+
+                            if (node.right != null) {
+                                node = this.doubleLeft(node);
+
+                            } else {
+                                break;
+                            }
+                            leftHeight = this.heightPriv(node.left);
+                            rightHeight = this.heightPriv(node.right);
+                        }
                     }
                 }
-                if (rightHeight < leftHeight) {
-                    while (leftHeight != rightHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
-
-                        if (node.left != null) {
-                            node = this.rotateLeft(node);
-                        }
-                        leftHeight = this.heightPriv(node.left);
-                        rightHeight = this.heightPriv(node.right);
-                    }
-
-                }
-                if (node.left != null || node.right != null) {
+                if (node.left != null) {
                     node.left = this.stabilizer(node.left);
+
+                }
+                if (rightHeight < leftHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
+                    if (node.right.left == null) {
+                        while (leftHeight != rightHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
+
+                            if (node.left != null) {
+                                node = this.rotateLeft(node);
+
+                            } else {
+                                break;
+                            }
+                            leftHeight = this.heightPriv(node.left);
+                            rightHeight = this.heightPriv(node.right);
+                        }
+
+                    } else {
+                        while (leftHeight != rightHeight && leftHeight + 1 != rightHeight && rightHeight + 1 != leftHeight) {
+
+                            if (node.left != null) {
+                                node = this.doubleRight(node);
+
+                            } else {
+                                break;
+                            }
+                            leftHeight = this.heightPriv(node.left);
+                            rightHeight = this.heightPriv(node.right);
+                        }
+                    }
+                }
+                if (node.right != null) {
+
                     node.right = this.stabilizer(node.right);
                 }
             }
