@@ -34,14 +34,25 @@ public class Main {
         graph2.insterEdgeBoth(3, 4);
         graph2.insterEdgeBoth(4, 1);
         graph2.insterEdgeBoth(5, 3);
+        MultiReturn multi = new MultiReturn();
+        MultiReturn multi2 = new MultiReturn();
         Queuell queue2 = new Queuell<Integer>();
-        queue2 = graph2.cycle(0,queue2,0,-1);
-        //queue2 = graph2.cycle(0, queue2, 0,0);
+        queue2 = graph2.cycle(1,queue2,0,-1);
         while(!queue2.isEmpty()){
             System.out.println(queue2.dequeue().data);
         }
-        //System.out.println("0");
-    }
-    
-    
+        int[] array = new int[graph.array.length];
+        multi = graph2.cycleSecond(1,1,0,array,multi,-1);
+        while(!multi.stack.isEmpty()){
+            System.out.println(multi.stack.pop().data);
+        }
+        int[] array2 = new int[graph.array.length];
+        for(int i = 0;i<array.length;i++){
+            array2[i]= -1;
+        }
+        multi2 = graph2.euclidCycle(1,1,0,array2,multi,-1);
+        while(!multi2.stack.isEmpty()){
+            System.out.println(multi.stack.pop().data);
+        }
+    }  
 }
