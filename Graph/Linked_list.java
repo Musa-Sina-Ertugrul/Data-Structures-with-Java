@@ -344,6 +344,16 @@ public class Linked_list<T> {
             tmp2 = tmp2.next;
         }
         return i;
+    }
     
+    int[] nodeNamesInt(){
+        Node<Integer> tmp = (Node<Integer>) this.first;
+        int index = 0;
+        int[] array = new int[this.nodeCount()];
+        while(tmp != null){
+            array[index] = tmp.data;
+            index++;
+        }
+        return array;
     }
 }

@@ -315,7 +315,7 @@ public class SparseGraphLL {
         return result;
     }
 
-    MultiReturn euclidCycle(int node, int startNode, int count, int[] array, MultiReturn multi, int backInt) {
+    MultiReturn hamiltonPath(int node, int startNode, int count, int[] array, MultiReturn multi, int backInt) {
         int[] arrayWay = new int[this.array[node].nodeCount()];;
         if ((node != startNode || (node == startNode && count == 0)) && node != backInt) {
             if (!this.valueChecker(node, array)) {
@@ -348,7 +348,7 @@ public class SparseGraphLL {
                         tmpIndex -= 1;
                     }
                     arrayTmp = array.clone();
-                    arrayVS[i] = this.euclidCycleHelper(arrayTmp, 0, tmp.data, startNode);
+                    arrayVS[i] = this.hamiltonPathHelper(arrayTmp, 0, tmp.data, startNode);
                     tmp = this.array[node].first;
                 }
                 index = arraySame[this.biggestIndexFinder(arrayVS)];
@@ -361,7 +361,7 @@ public class SparseGraphLL {
                     multi.stack.push(new Node<Integer>(node));
                     return multi;
                 } else {
-                    this.euclidCycle(backInt, startNode, count, array, multi, backInt);
+                    this.hamiltonPath(backInt, startNode, count, array, multi, backInt);
                 }
             } else {
                 tmp = this.array[node].first;
@@ -372,13 +372,13 @@ public class SparseGraphLL {
                 if (!multi.stack.search(node)) {
                     multi.stack.push(new Node<Integer>(node));
                 }
-                this.euclidCycle(tmp.data, startNode, count, array, multi, node);
+                this.hamiltonPath(tmp.data, startNode, count, array, multi, node);
             }
         }
         return multi;
     }
 
-    int euclidCycleHelper(int[] array, int count, int node, int startNode) {
+    int hamiltonPathHelper(int[] array, int count, int node, int startNode) {
         int result = 1;
         if (!this.valueChecker(node, array)) {
             array[count] = node;
@@ -389,7 +389,7 @@ public class SparseGraphLL {
             while (index != this.array[node].nodeCount()) {
                 if (!this.valueChecker(tmp.data, array)) {
                     int[] arrayTmp = array.clone();
-                    arrayWay[index] += this.euclidCycleHelper(arrayTmp, count, tmp.data, startNode);
+                    arrayWay[index] += this.hamiltonPathHelper(arrayTmp, count, tmp.data, startNode);
                 } else {
                     arrayWay[index] = 1;
                 }
@@ -403,7 +403,8 @@ public class SparseGraphLL {
                 }
                 return 5;
             } else {
-                result = biggest;            }
+                result = biggest;
+            }
         }
         return result;
     }
@@ -414,6 +415,21 @@ public class SparseGraphLL {
             if (num < array[i]) {
                 num = array[i];
             }
+        }
+        return num;
+    }
+
+    Integer biggestFinder(int[] array, int[] values) {
+        int num = array[0];
+        for (int i = 0; i < array.length; i++) {
+            if (!this.valueChecker(num, array)) {
+                if (num < array[i]) {
+                    num = array[i];
+                }
+            }
+        }
+        if (this.valueChecker(num, array)) {
+            return null;
         }
         return num;
     }
@@ -512,4 +528,9 @@ public class SparseGraphLL {
         return false;
     }
 
+    MultiReturn topologicalSort(int[] array, MultiReturn multi, String type) {
+        // sorting konusuna gelince doldurulacak
+        // ipucu: bfs veya dfs le node ları al array e at sonra bi tane sorting algoritması ile sırala
+        return multi;
+    }
 }

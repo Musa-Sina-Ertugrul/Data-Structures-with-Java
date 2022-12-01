@@ -50,7 +50,7 @@ public class Main {
         for(int i = 0;i<array.length;i++){
             array2[i]= -1;
         }
-        multi2 = graph2.euclidCycle(1,1,0,array2,multi,-1);
+        multi2 = graph2.hamiltonPath(1,1,0,array2,multi,-1);
         while(!multi2.stack.isEmpty()){
             System.out.println(multi.stack.pop().data);
         }

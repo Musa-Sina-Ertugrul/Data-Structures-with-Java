@@ -10,9 +10,11 @@ package com.mycompany.graph;
  */
 public class MultiReturn {
     Stackll<Integer> stack;
+    Queuell<Integer> queue;
     int num;
     public MultiReturn(){
         this.num = 0;
         this.stack = new Stackll<Integer>();
+        this.queue = new Queuell<Integer>();
     }
 }
