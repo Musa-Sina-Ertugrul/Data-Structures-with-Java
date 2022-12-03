@@ -66,30 +66,6 @@ public class BinaryTree<AnyType> {
     void treversalHelper() {
         this.treversal = this.root;
     }
-    
-    TreeNode doubleLeft(TreeNode node){
-        TreeNode tmp = node.right.left;
-        TreeNode nodeRight = node.right;
-        TreeNode tmpRight = tmp.right;
-        TreeNode tmpLeft = tmp.left;
-        tmp.right = node.right;
-        nodeRight.left = tmpRight;
-        tmp.left = node;
-        node.right = tmpLeft;
-        return tmp;
-    }
-    
-    TreeNode doubleRight(TreeNode node){
-        TreeNode tmp = node.left.right;
-        TreeNode nodeLeft = node.left;
-        TreeNode tmpRight = tmp.right;
-        TreeNode tmpLeft = tmp.left;
-        tmp.left = nodeLeft;
-        nodeLeft.right = tmpRight;
-        tmp.right = node;
-        node.left = tmpLeft;
-        return tmp;
-    }
 
     void insert(int value) {
         TreeNode prev_tmp = null;
@@ -203,17 +179,17 @@ public class BinaryTree<AnyType> {
 
         if (tmp.left != null) {
             tmp_tmp = tmp.left;
-            while (tmp_tmp.left != null) {
+            while (tmp_tmp.right != null) {
                 prev_tmp = tmp_tmp;
-                tmp_tmp = tmp_tmp.left;
+                tmp_tmp = tmp_tmp.right;
             }
             num_tmp = tmp_tmp;
         }
         if (num_tmp == null && tmp.right != null) {
             tmp_tmp = tmp.right;
-            while (tmp_tmp.right != null) {
+            while (tmp_tmp.left != null) {
                 prev_tmp = tmp_tmp;
-                tmp_tmp = tmp_tmp.right;
+                tmp_tmp = tmp_tmp.left;
             }
             num_tmp = tmp_tmp;
         }
@@ -320,7 +296,7 @@ public class BinaryTree<AnyType> {
         TreeNode nodeRight = node.right;
         TreeNode tmpRight = tmp.right;
         TreeNode tmpLeft = tmp.left;
-        tmp.right = node.right;
+        tmp.right = nodeRight;
         nodeRight.left = tmpRight;
         tmp.left = node;
         node.right = tmpLeft;
@@ -517,6 +493,39 @@ public class BinaryTree<AnyType> {
         }
         return null;
 
+    }
+
+    void printTreeLike() {
+        int height = this.height()+1;
+        Queuell<TreeNode>[] array = new Queuell[height];
+        array = this.nodeAdder(this.root, array, 0);
+        for (int i = 0; i < array.length; i++) {
+            while (!array[i].isEmpty()) {
+                System.out.print(array[i].dequeue().data.data.toString() + " ");
+            }
+            System.out.println();
+        }
+
+    }
+
+    private Queuell[] nodeAdder(TreeNode node, Queuell[] array,int count) {
+        if (node == null) {
+            return null;
+        } else {
+            if (array[count] == null) {
+                array[count] = new Queuell();
+                array[count].enqueue(new Node(node));
+                count++;
+                this.nodeAdder(node.left, array, count);
+                this.nodeAdder(node.right, array, count);
+            } else {
+                array[count].enqueue(new Node(node));
+                count++;
+                this.nodeAdder(node.left, array, count);
+                this.nodeAdder(node.right, array, count);
+            }
+        }
+        return array;
     }
 
 }
