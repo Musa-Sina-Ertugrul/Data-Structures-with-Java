@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.binarytree;
+package com.mycompany.cseproject;
 
 import java.util.ArrayList;
 
@@ -20,6 +20,8 @@ public class BTree<AnyType> {
         this.root = null;
     }
 
+    // this method inserts elements when there is no breaking and when node is not null
+    // this method insert element just in paremater node
     void insert(BTreeNode<Integer> node, Integer value) {
         if (value == null) {
             return;
@@ -27,6 +29,7 @@ public class BTree<AnyType> {
         BTreeNode<Integer> tmp;
         BTreeNode<Integer> prevTmp = null;
         int indexConnection = 0;
+        // this part finds way
         if (this.root == null) {
             tmp = new BTreeNode(this.T);
             this.root = tmp;
@@ -48,6 +51,7 @@ public class BTree<AnyType> {
         if (tmp == null && this.root == tmp) {
             tmp = tmp.arrayChildren[indexConnection];
         }
+        // this part find index for element if it needs they shift other elements
         int indexShift = this.indexFinder(tmp, value);
         if (indexShift != this.T - 1) {
             tmp.arrayNum = this.shifter(tmp, value);
@@ -56,6 +60,7 @@ public class BTree<AnyType> {
             tmp.arrayNum[indexShift] = value;
         }
         tmp.index++;
+        // this part checking conditations for breaking method
         if (prevTmp == null && tmp.index == this.T) {
             this.root = this.breaker(null);
         } else if (prevTmp != null && tmp.index == this.T) {
@@ -74,6 +79,8 @@ public class BTree<AnyType> {
 
     }
 
+    // this find previous node, index of node andd index
+    // I used object to return more variables etc.
     MultiReturn searchNode(int value) {
         BTreeNode<Integer> tmp = this.root;
         BTreeNode<Integer> prevTmp = null;
@@ -89,6 +96,7 @@ public class BTree<AnyType> {
         return multi;
     }
 
+    // this method breake node create new nodes and attach them to btree
     BTreeNode<Integer> breaker(BTreeNode<Integer> node) {
         MultiReturn multi;
         Integer value = null;
@@ -102,6 +110,7 @@ public class BTree<AnyType> {
         BTreeNode<Integer> tmp;
         BTreeNode<Integer> prevTmp;
         BTreeNode<Integer> newTmp = new BTreeNode(this.T);
+        // this part checks is node equeal root node
         if (multi != null) {
             tmp = multi.node.arrayChildren[multi.index];
             prevTmp = multi.node;
@@ -113,6 +122,7 @@ public class BTree<AnyType> {
             prevTmp.leaf = false;
             this.insert(prevTmp, value);
         }
+        // this part re insert and delete necessery items
         int index = ((this.T - 1) / 2) + 1;
         newTmp.arrayNum = tmp.arrayNum.clone();
         for (int i = 0; i < index - 1; i++) {
@@ -124,57 +134,56 @@ public class BTree<AnyType> {
         for (int i = index - 1; i < newTmp.arrayNum.length; i++) {
             newTmp.arrayNum[i] = null;
         }
+        // this part checks conditations for seperatation
         if (multi != null) {
+            // this part is for node has enough place to insert new node to last index
             if (multi.index + 1 < this.T && prevTmp.arrayChildren[multi.index + 1] == null) {
                 prevTmp.arrayChildren[multi.index + 1] = newTmp;
+                // this part is for node has enough place to insert new node to not last index
             } else if (multi.index + 1 < this.T && prevTmp.arrayChildren[multi.index + 1] != null) {
+                // this part makes decision to shift new element to right of old element or left of old element
+                BTreeNode<Integer> tmpShift = null;
+                BTreeNode<Integer> prevTmpShift = null;
+                for (int i = multi.index; i < prevTmp.index - 1; i++) {
+                    prevTmpShift = prevTmp.arrayChildren[i];
+                    prevTmp.arrayChildren[i] = tmpShift;
+                    tmpShift = prevTmp.arrayChildren[i + 1];
+                    prevTmp.arrayChildren[i + 1] = prevTmpShift;
+                }
                 if (tmp.arrayNum[0] > newTmp.arrayNum[0]) {
-                    BTreeNode<Integer> tmpShift = null;
-                    BTreeNode<Integer> prevTmpShift = null;
-                    for (int i = multi.index; i < prevTmp.index - 1; i++) {
-                        prevTmpShift = prevTmp.arrayChildren[i];
-                        prevTmp.arrayChildren[i] = tmpShift;
-                        tmpShift = prevTmp.arrayChildren[i + 1];
-                        prevTmp.arrayChildren[i + 1] = prevTmpShift;
-                    }
                     prevTmp.arrayChildren[prevTmp.index] = tmpShift;
                     prevTmp.arrayChildren[multi.index + 1] = tmp;
                     prevTmp.arrayChildren[multi.index] = newTmp;
                 } else if (tmp.arrayNum[0] < newTmp.arrayNum[0]) {
-                    BTreeNode<Integer> tmpShift = null;
-                    BTreeNode<Integer> prevTmpShift = null;
-                    for (int i = multi.index + 1; i < prevTmp.index - 1; i++) {
-                        prevTmpShift = prevTmp.arrayChildren[i];
-                        prevTmp.arrayChildren[i] = tmpShift;
-                        tmpShift = prevTmp.arrayChildren[i + 1];
-                        prevTmp.arrayChildren[i + 1] = prevTmpShift;
-                    }
                     prevTmp.arrayChildren[prevTmp.index] = tmpShift;
                     prevTmp.arrayChildren[multi.index + 1] = newTmp;
                     prevTmp.arrayChildren[multi.index] = tmp;
                 }
             } else {
+                // this part is for breaking full node and creating new node which has leafs etc.
                 multi = this.searchNode(tmp.arrayNum[0]);
                 prevTmp = multi.node.arrayChildren[multi.index];
-                prevTmp.arrayChildren[2] = newTmp;
-                prevTmp.index = (this.T-1)/2;
+                prevTmp.arrayChildren[(this.T - 1) / 2] = newTmp;
+                prevTmp.index = (this.T - 1) / 2;
                 prevTmp.leaf = false;
             }
         } else {
+            // this part making new root node and attach it to new mid leaf
             prevTmp.arrayChildren[1] = newTmp;
             prevTmp.arrayChildren[0] = tmp;
-            BTreeNode<Integer> tmpShift = tmp.arrayChildren[4];
-            BTreeNode<Integer> prevTmpShift = tmp.arrayChildren[3];
-            tmp.arrayChildren[3] = null;
-            tmp.arrayChildren[4] = null;
-            newTmp.arrayChildren[1] = tmpShift;
-            newTmp.arrayChildren[0] = prevTmpShift;
+            BTreeNode[] tmpShift = new BTreeNode[(this.T - 1) / 2];
+            int indexShift = 0;
+            for (int i = ((this.T - 1) / 2) + 1; i < this.T; i++) {
+                newTmp.arrayChildren[indexShift] = tmp.arrayChildren[i];
+                index++;
+                tmp.arrayChildren[i] = null;
+            }
         }
         newTmp.index = (this.T - 1) / 2;
         tmp.index = (this.T - 1) / 2;
         return prevTmp;
     }
-
+    // this part find index for number
     int indexFinder(BTreeNode<Integer> node, int value) {
         int index = 0;
         if (node.arrayNum[index] != null) {
@@ -191,7 +200,7 @@ public class BTree<AnyType> {
         }
         return index;
     }
-
+    // this part shifts numbers
     Integer[] shifter(BTreeNode<Integer> node, int value) {
         int index = 0;
         while (node.arrayNum[index] != null && node.arrayNum[index] < value) {
@@ -225,42 +234,43 @@ public class BTree<AnyType> {
             this.display(node.arrayChildren[i], level);
         }
     }
-    
-    private void insertArray(Integer[] array){
-        for(int i = 0;i<array.length;i++){
+
+    private void insertArray(Integer[] array) {
+        for (int i = 0; i < array.length; i++) {
             this.insert(null, array[i]);
         }
     }
-    
-    private ArrayList<Integer> sortedArray(BTreeNode<Integer> node,ArrayList<Integer> array){
+    // this part adds number of btree to arraylist
+    private ArrayList<Integer> sortedArray(BTreeNode<Integer> node, ArrayList<Integer> array) {
         if (node == null) {
             return array;
         }
         for (int i = 0; i < node.index + 1; i++) {
-            this.sortedArray(node.arrayChildren[i],array);
-            if(!node.leaf && node.arrayNum[i] != null){
+            this.sortedArray(node.arrayChildren[i], array);
+            if (!node.leaf && node.arrayNum[i] != null) {
                 array.add(node.arrayNum[i]);
             }
         }
-        for(int i = 0; i< node.index;i++){
-            if(node.leaf)
-            array.add(node.arrayNum[i]);
+        for (int i = 0; i < node.index; i++) {
+            if (node.leaf) {
+                array.add(node.arrayNum[i]);
+            }
         }
         if (node.leaf) {
             return array;
         }
         return array;
     }
-    
-    private Integer[] listArrayConverter(ArrayList<Integer> arrayList){
+
+    private Integer[] listArrayConverter(ArrayList<Integer> arrayList) {
         Integer[] array = new Integer[arrayList.size()];
-        for(int i = 0; i< array.length;i++){
+        for (int i = 0; i < array.length; i++) {
             array[i] = arrayList.get(i);
         }
         return array;
     }
-    
-    Integer[] sort(Integer[] array){
+
+    Integer[] sort(Integer[] array) {
         this.insertArray(array);
         ArrayList<Integer> arrayList = new ArrayList();
         arrayList = this.sortedArray(this.root, arrayList);
